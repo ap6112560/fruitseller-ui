@@ -10,6 +10,13 @@ function User(props) {
         if(oid.value !== ""){
             orderService.getById(oid.value).then(
                 (response) => {
+                    response.items.map((item) => {
+                        item.content = item.products.map((product) => product.name).join(',');
+                        if(item.products.length > 1){
+                            item.content = 'Combo: [' + item.content + ']';
+                        }
+                        return item;
+                    });
                     setOrder(response);
                 }
             );
@@ -22,7 +29,7 @@ function User(props) {
             (item, index) => 
             <div key={index}>
                 <img src={apple} alt=""/>
-                <h4><b>{item.products[0].name}</b></h4>
+                <h4><b>{item.content}</b></h4>
                 <p>{'Price:' + item.price}</p>
                 <p>{'Quantity:' + item.quantity}</p>
             </div>);

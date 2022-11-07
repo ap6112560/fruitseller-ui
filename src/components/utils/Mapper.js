@@ -1,13 +1,14 @@
-let mapOrderSaveRequest = (name, address, products) => {
+let mapOrderSaveRequest = (name, address, products, combos) => {
     let saveRequest = {};
     saveRequest.status = 'ORDERED';
     saveRequest.customerName = name;
     saveRequest.orderDate = new Date().toISOString().slice(0, 10);
-    saveRequest.items = products.filter((product) => product.quantity !== undefined)
+    saveRequest.items = [];
+    const list1 = products.filter((product) => product.quantity !== undefined)
         .map((product, index) => {
             let item = {};
             item.quantity = product.quantity;
-            item.price = product.quantity * product.price;
+            item.price = product.price;
             item.products = [{
                 name: product.name
             }];
@@ -16,9 +17,27 @@ let mapOrderSaveRequest = (name, address, products) => {
             };
             return item;
         });
+    saveRequest.items.push.apply(saveRequest.items, list1);
+    const list2 = combos.filter((combo) => combo.quantity !== undefined)
+        .map((combo, index) => {
+            let item = {};
+            item.quantity = combo.quantity;
+            item.price = combo.price;
+            item.products = combo.products
+                .map((product)=> {
+                    return {
+                        name: product.name
+                    }
+                });
+            item.id = {
+                itemId: combo.name + index
+            };
+            return item;
+        });
+    saveRequest.items.push.apply(saveRequest.items, list2);
     saveRequest.payment = {
         status: 'COMPLETE',
-        amount: saveRequest.items.map((item) => item.price).reduce((tot, v) => tot + v, 0)
+        amount: saveRequest.items.map((item) => item.quantity * item.price).reduce((tot, v) => tot + v, 0)
     };
     saveRequest.shipment = {
         shipmentMethod: 'NONE',
