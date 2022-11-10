@@ -11,7 +11,7 @@ function User(props) {
             orderService.getById(oid.value).then(
                 (response) => {
                     response.items.map((item) => {
-                        item.content = item.products.map((product) => product.name).join(',');
+                        item.content = item.products.join(',');
                         if(item.products.length > 1){
                             item.content = 'Combo: [' + item.content + ']';
                         }

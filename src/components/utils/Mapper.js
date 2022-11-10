@@ -9,9 +9,9 @@ let mapOrderSaveRequest = (name, address, products, combos) => {
             let item = {};
             item.quantity = product.quantity;
             item.price = product.price;
-            item.products = [{
-                name: product.name
-            }];
+            item.products = [
+                product.name
+            ];
             item.id = {
                 itemId: product.name + index
             };
@@ -23,12 +23,7 @@ let mapOrderSaveRequest = (name, address, products, combos) => {
             let item = {};
             item.quantity = combo.quantity;
             item.price = combo.price;
-            item.products = combo.products
-                .map((product)=> {
-                    return {
-                        name: product.name
-                    }
-                });
+            item.products = combo.products.map((product)=> product.name);
             item.id = {
                 itemId: combo.name + index
             };
