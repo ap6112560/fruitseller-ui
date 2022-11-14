@@ -40,7 +40,6 @@ function User(props) {
 
     return (
         <React.Fragment>
-            <br/>
             <label>
             Order Id&nbsp;
             <input id="oid" type="text" ref={(el)=>{oid=el}}/>

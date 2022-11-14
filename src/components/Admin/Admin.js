@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect,useCallback} from 'react';
 import orderService from '../../services/Order'
 import 'devextreme/dist/css/dx.light.css';
 import DataGrid,
@@ -21,45 +21,67 @@ let onSaving = (event)=>{
 function Admin(props) {
 
     const [data, setData] = useState([]);
-    let oid, ostatus, smethod;
+    const [pageNo, setPageNo] = useState(1);
+    const [oid, setOid] = useState("");
+    const [ostatus, setOstatus] = useState("");
+    const [smethod, setSmethod] = useState("");
+    let prev, next;
 
-    const filterResults = ()=>{
+    const filterResults = useCallback(()=>{
         let params = {};
         if(oid.value !== ""){
             params["filter.orderId"]=oid.value;
-            oid.value="";
         }
         if(ostatus.value !== ""){
             params["filter.order.status"]=ostatus.value;
-            ostatus.value="";
         }
         if(smethod.value !== ""){
             params["filter.shipment.method"]=smethod.value;
-            smethod.value="";
         }
+        params["filter.page.number"]=pageNo;
+        
         orderService.get(params).then(
             (response) => {
                 setData(mapOrderResponse(response));
             }
         );
-    }
+    }, [oid, ostatus, pageNo, smethod]);
     
+    const onNext = ()=>{
+        setPageNo(pageNo+1)
+    }
+    const onPrev = ()=>{
+        setPageNo(pageNo-1);
+    }
+
+    useEffect(() => {
+        filterResults();
+    },[pageNo,filterResults]);
+
+    useEffect(() => {
+        data.length===20?
+            next.disabled=false:
+            next.disabled=true;
+        pageNo>1?
+            prev.disabled=false:
+            prev.disabled=true;
+    },[data,next,prev,pageNo]);
+
     return (
         <React.Fragment>
-          <br/>
           <label>
           Order Id&nbsp;
-          <input id="oid" type="text" ref={(el)=>{oid=el}}/>
+          <input id="oid" type="text" ref={(el)=>{setOid(el)}}/>
           </label>
           &nbsp; 
           <label>
           Order Status&nbsp; 
-          <input id="ostatus" type="text" ref={(el)=>{ostatus=el}}/>
+          <input id="ostatus" type="text" ref={(el)=>{setOstatus(el)}}/>
           </label>
           &nbsp; 
           <label>
           Shipment Method&nbsp; 
-          <input id="pstatus" type="text" ref={(el)=>{smethod=el}}/>
+          <input id="pstatus" type="text" ref={(el)=>{setSmethod(el)}}/>
           </label>
           &nbsp;
           <button onClick={filterResults} >Filter</button>
@@ -73,7 +95,7 @@ function Admin(props) {
             onSaved={onSaving}
             >
   
-            <Paging enabled={true} />
+            <Paging enabled={false} />
             <Editing
               mode="row"
               allowUpdating={true} />
@@ -89,6 +111,11 @@ function Admin(props) {
             <Column dataField="EstimatedArrival"/>
 
           </DataGrid>
+          <br/>
+          <label>Page: {pageNo}</label>
+          <hr/>
+          <button id="prev" onClick={onPrev} ref={(el)=>{prev=el}}>Prev</button>
+          <button id="next" onClick={onNext} ref={(el)=>{next=el}}>Next</button>
         </React.Fragment>
     );
 }

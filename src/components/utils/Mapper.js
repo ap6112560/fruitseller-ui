@@ -2,7 +2,7 @@ let mapOrderSaveRequest = (name, address, products, combos) => {
     let saveRequest = {};
     saveRequest.status = 'ORDERED';
     saveRequest.customerName = name;
-    saveRequest.orderDate = new Date().toISOString().slice(0, 10);
+    saveRequest.orderDate = new Date().toISOString().slice(0, 19);
     saveRequest.items = [];
     const list1 = products.filter((product) => product.quantity !== undefined)
         .map((product, index) => {

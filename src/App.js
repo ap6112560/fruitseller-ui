@@ -13,6 +13,7 @@ function App() {
       <Link name='user' to={"/user"}>User</Link>
       &nbsp;
       <Link name='admin' to={"/admin"}>Admin</Link>
+      <hr/>
       <Routes>
         <Route path={"/products"} element={<Products/>}/>
         <Route path={"/user"} element={<User/>}/>
