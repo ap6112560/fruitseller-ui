@@ -25,22 +25,20 @@ function Products(props) {
             setCombos(response);
         })
     }, []);
-
-    const updateProductQty = async (name, quantity) => await productService.update(name, quantity);
     
     let handleButtonClick = () => {
         let order = mapOrderSaveRequest(name, address, products, combos);
         orderService.post(order).then(
-            (response) => {
+            async (response) => {
                 const filteredProducts = products.filter((product) => !isNaN(product.quantity));
                 const filteredCombos = combos.filter((combo) => !isNaN(combo.quantity));
 
                 for (let product of filteredProducts) {
-                    updateProductQty(product.name, product.quantity);
+                    await productService.update(product.name, product.quantity);
                 }
                 for(let combo of filteredCombos){
                     for(let product of combo.products){
-                        updateProductQty(product.name, combo.quantity);
+                        await productService.update(product.name, combo.quantity);
                     }
                 }
                 alert("Order Placed with id: " + response.orderId);
