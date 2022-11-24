@@ -59,7 +59,8 @@ function Products(props) {
             (combo, index) => 
             <div key={index}>
                 <img src={apple} alt=""/>
-                <h4><b>{combo.name + ': [' + combo.content + ']'}</b></h4>
+                <h4><b>{combo.name}</b></h4>
+                <b>{'[' + combo.content + ']'}</b>
                 <p>{'Price:' + combo.price}</p>
                 <input type='text' placeholder='Quantity...' id={index} onChange={handleComboQuantityOnChange}/>
             </div>);
@@ -83,6 +84,11 @@ function Products(props) {
     return (
         <div>
             {renderItems()}
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
             <br/>
             <input type="text" placeholder='Name...' onChange={handleNameOnChange}/>
             <input type="text" placeholder='Address...' onChange={handleAddressOnChange}/>
