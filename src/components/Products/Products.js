@@ -26,16 +26,23 @@ function Products(props) {
         })
     }, []);
 
+    const updateProductQty = async (name, quantity) => await productService.update(name, quantity);
+    
     let handleButtonClick = () => {
         let order = mapOrderSaveRequest(name, address, products, combos);
-        products.filter((product) => product.quantity !== undefined)
-            .map((product) => productService.update(product.name, product.quantity));
-        combos.filter((combo) => combo.quantity !== undefined)
-            .map((combo) => 
-                combo.products.map((product)=> productService.update(product.name, combo.quantity))
-            );
         orderService.post(order).then(
             (response) => {
+                const filteredProducts = products.filter((product) => !isNaN(product.quantity));
+                const filteredCombos = combos.filter((combo) => !isNaN(combo.quantity));
+
+                for (let product of filteredProducts) {
+                    updateProductQty(product.name, product.quantity);
+                }
+                for(let combo of filteredCombos){
+                    for(let product of combo.products){
+                        updateProductQty(product.name, combo.quantity);
+                    }
+                }
                 alert("Order Placed with id: " + response.orderId);
             }
         );
